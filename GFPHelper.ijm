@@ -6,8 +6,6 @@ thePath = Dialog.getString();
 entireFile = File.openAsString(thePath);
 entireFileArray = split(entireFile,"\n");
 cellNumber = 1;
-xCoordsSum = 0;
-yCoordsSum = 0;
 for (i = 0; i < entireFileArray.length; i++) {
    if (entireFileArray[i].indexOf("CELL_START") == -1) {
       continue;
@@ -21,6 +19,8 @@ for (i = 0; i < entireFileArray.length; i++) {
    xCoordsAvg = 0;
    yCoordsAvg = 0;
    numPoints = 0;
+   xCoordsSum = 0;
+   yCoordsSum = 0;
    for (j = 1; j < xCoordsString.length; j++) {
       xCoords[j-1] = xCoordsString[j];
       numPoints++;
@@ -47,6 +47,4 @@ for (i = 0; i < entireFileArray.length; i++) {
    Overlay.drawString(cellNumber, xCoordsAvg, yCoordsAvg);
    cellNumber++;
    Overlay.show;
-   xCoordsSum = 0;
-   yCoordsSum = 0;
 }
