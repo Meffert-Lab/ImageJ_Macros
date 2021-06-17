@@ -6,6 +6,16 @@ thePath = Dialog.getString();
 entireFile = File.openAsString(thePath);
 entireFileArray = split(entireFile,"\n");
 cellNumber = 1;
+/*
+for (i = 0; i < entireFileArray.length; i++) {
+	if (entireFileArray[i].indexOf("IMG_Raw") == -1) {
+		continue;
+	}
+	imageNameRow = split(entireFileArray[i], "\t");
+	imageName = imageNameRow[1];
+}
+open("/Users/sreenivaseadara/Johns\ Hopkins/Xinbei\ Li\ -\ mouse\ 5\&6\ \(1\)/" + imageName);
+*/
 for (i = 0; i < entireFileArray.length; i++) {
 	if (entireFileArray[i].indexOf("CELL_START") == -1) {
    		continue;
@@ -29,13 +39,14 @@ for (i = 0; i < entireFileArray.length; i++) {
 		yCoords[k-1] = yCoordsString[k];
 	}
 	makeSelection("polygon", xCoords, yCoords);
-	Overlay.addSelection;
+	Overlay.addSelection("red");
 	for (l = 0; l < xCoords.length; l++) {
 		xCoordsSum = (xCoordsSum + xCoords[l]);
 		yCoordsSum = (yCoordsSum + yCoords[l]);
 	}
 	xCoordsAvg = (xCoordsSum/numPoints);
 	yCoordsAvg = (yCoordsSum/numPoints);
+	setColor("red");
 	Overlay.drawString(cellNumber, xCoordsAvg, yCoordsAvg);
 	cellNumber++;
 }
