@@ -6,7 +6,16 @@ thePath = Dialog.getString();
 entireFile = File.openAsString(thePath);
 entireFileArray = split(entireFile,"\n");
 cellNumber = 1;
-/*
+
+imageDirectory = "NONE GIVEN";
+imageName = "NONE GIVEN";
+for (i = 0; i < entireFileArray.length; i++) {
+	if (entireFileArray[i].indexOf("IMG_DIR") == -1) {
+		continue;
+	}
+	imageDirectoryRow = split(entireFileArray[i], "\t");
+	imageDirectory = imageDirectoryRow[1];
+}
 for (i = 0; i < entireFileArray.length; i++) {
 	if (entireFileArray[i].indexOf("IMG_Raw") == -1) {
 		continue;
@@ -14,8 +23,10 @@ for (i = 0; i < entireFileArray.length; i++) {
 	imageNameRow = split(entireFileArray[i], "\t");
 	imageName = imageNameRow[1];
 }
-open("/Users/sreenivaseadara/Johns\ Hopkins/Xinbei\ Li\ -\ mouse\ 5\&6\ \(1\)/" + imageName);
-*/
+if (imageDirectory != "NONE GIVEN" && imageName != "NONE GIVEN") {
+	open(imageDirectory + "/" + imageName);
+}
+
 for (i = 0; i < entireFileArray.length; i++) {
 	if (entireFileArray[i].indexOf("CELL_START") == -1) {
    		continue;
