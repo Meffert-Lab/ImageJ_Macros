@@ -43,7 +43,7 @@ function splitData (directoryContents, folder) {
 		run("Bio-Formats", "open=[" + folder + directoryContents[i] + "] autoscale color_mode=Default rois_import=[ROI manager] view=Hyperstack stack_order=XYCZT series_");
 		getDimensions(width, height, channels, slices, frames);
 		run("Duplicate...", "duplicate frames=1");
-		run("Arrange Channels...", "new=123456");
+		//run("Arrange Channels...", "new=123456");
 		run("Split Channels");
 		for (k = 1; k <= channels; k++) {
 			channelNumber = channels - k + 1;
@@ -51,5 +51,6 @@ function splitData (directoryContents, folder) {
 			close();
 		}
 		close("*");
+		run("Collect Garbage");
 	}
 }
