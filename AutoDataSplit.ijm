@@ -40,11 +40,12 @@ function splitData (directoryContents, folder) {
 			filenameWithoutExtension += directoryContents[i].charAt(j);
 		}
 		print(filenameWithoutExtension);
-		run("Bio-Formats", "open=[" + folder + directoryContents[i] + "] autoscale color_mode=Default rois_import=[ROI manager] view=Hyperstack stack_order=XYCZT series_");
-		getDimensions(width, height, channels, slices, frames);
-		run("Duplicate...", "duplicate frames=1");
+		run("Bio-Formats", "open=[" + folder + directoryContents[i] + "] autoscale color_mode=Default rois_import=[ROI manager] split_channels view=Hyperstack stack_order=XYCZT series_");
+		//getDimensions(width, height, channels, slices, frames);
+		//run("Duplicate...", "duplicate frames=1");
 		//run("Arrange Channels...", "new=123456");
-		run("Split Channels");
+		//run("Split Channels");
+		channels = nImages;
 		for (k = 1; k <= channels; k++) {
 			channelNumber = channels - k + 1;
 			run("Save", "save=[" + folder + filenameWithoutExtension + "_C" + channelNumber + "-1.tif]");
