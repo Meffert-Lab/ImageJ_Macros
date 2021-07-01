@@ -24,13 +24,7 @@ function splitData (directoryContents, folder) {
 		if(File.isDirectory(folder + directoryContents[i])) {
 			continue;
 		}
-		filenameWithoutExtension = "";
-		for(j = 0; j < directoryContents[i].length; j++) {
-			if (directoryContents[i].charAt(j) == '.') {
-				break;
-			}
-			filenameWithoutExtension += directoryContents[i].charAt(j);
-		}
+		filenameWithoutExtension = directoryContents[i].substring(0, directoryContents[i].lastIndexOf("."));
 		run("Bio-Formats", "open=[" + folder + directoryContents[i] + "] autoscale color_mode=Default rois_import=[ROI manager] split_channels view=Hyperstack stack_order=XYCZT series_");
 		channels = nImages;
 		for (k = 1; k <= channels; k++) {
