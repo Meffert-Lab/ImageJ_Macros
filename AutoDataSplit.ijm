@@ -31,7 +31,6 @@ function splitData (directoryContents, folder) {
 			channelNumber = channels - k + 1;
 			run("Save", "save=[" + folder + filenameWithoutExtension + "_C" + channelNumber + "-1.tif]");
 			close();
-			run("Collect Garbage");
 		}
 		close("*");
 		run("Collect Garbage");
