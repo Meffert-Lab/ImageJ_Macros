@@ -125,14 +125,25 @@ for (i = 0; i < entireFileArray.length; i++) {
 
 	INF = Math.max(imageMaxX, imageMaxY) + 3;
 	r = 0;
+	t = 0;
 	while (r < subRegionX.length) {
-		if (subRegionX[r] == -1 || subRegionY[r] == -1) {
+		if (subRegionX[r] == -1) {
 			break;
 		}
-		if (isInside(xCoords, yCoords, subRegionX[r], subRegionY[r])) {
-			onlyInCellX[onlyInCellX.length] = subRegionX[r];
-			onlyInCellY[onlyInCellY.length] = subRegionY[r];
+		while (t < subRegionY.length) {
+			if (subRegionY[t] == -1) {
+				break;
+			}
+			if (isInside(xCoords, yCoords, subRegionX[r], subRegionY[t])) {
+				onlyInCellX[onlyInCellX.length] = subRegionX[r];
+				onlyInCellY[onlyInCellY.length] = subRegionY[t];
+			}
+			t++;
+			if (t >= subRegionY.length) {
+				break;
+			}
 		}
+		t = 0;
 		r++;
 		if (r >= subRegionX.length) {
 			break;
