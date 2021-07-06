@@ -41,32 +41,33 @@ for (i = 0; i < entireFileArray.length; i++) {
 	numPoints = 0;
 	xCoordsSum = 0;
 	yCoordsSum = 0;
+	Array.fill(xCoords, -2);
+	Array.fill(yCoords, -2);
 	for (j = 1; j < xCoordsString.length; j++) {
-		xCoords[j-1] = xCoordsString[j];
+		xCoords[j-1] = parseInt(xCoordsString[j]);
 		numPoints++;
 	}
 	for (k = 1; k < yCoordsString.length; k++) {
-		yCoords[k-1] = yCoordsString[k];
+		yCoords[k-1] = parseInt(yCoordsString[k]);
 	}
-
 	minimumX = xCoords[0];
 	maximumX = xCoords[0];
 	minimumY = yCoords[0];
 	maximumY = yCoords[0];
-	for (i = 1; i < xCoords.length; i++) {
-		if (xCoords[i] < minimumX) {
-			minimumX = xCoords[i];
+	for (l = 1; l < xCoords.length; l++) {
+		if (xCoords[l] < minimumX) {
+			minimumX = xCoords[l];
 		}
-		if (xCoords[i] > maximumX) {
-			maximumX = xCoords[i];
+		if (xCoords[l] > maximumX) {
+			maximumX = xCoords[l];
 		}
 	}
-	for (i = 1; i < yCoords.length; i++) {
-		if (yCoords[i] < minimumY) {
-			minimumY = yCoords[i];
+	for (m = 1; m < yCoords.length; m++) {
+		if (yCoords[m] < minimumY) {
+			minimumY = yCoords[m];
 		}
-		if (yCoords[i] > maximumY) {
-			maximumY = yCoords[i];
+		if (yCoords[m] > maximumY) {
+			maximumY = yCoords[m];
 		}
 	}
 
@@ -75,68 +76,139 @@ for (i = 0; i < entireFileArray.length; i++) {
 	imageMinY = 0;
 	imageMaxY = getHeight();
 
-	gridSize = 6;
+	gridSize = 8;
 	
-	imageGridX = newArray((imageMaxX / gridSize) - imageMinX);
-	imageGridY = newArray((imageMaxY / gridSize) - imageMinY);
+	imageGridX = newArray((imageMaxX - imageMinX) / gridSize);
+	imageGridY = newArray((imageMaxY - imageMinY) / gridSize);
 	
-	for (i = 0; i < imageGridX.size; i++) {
-		imageGridX[i] = imageMinX + (i * gridSize);
+	for (n = 0; n < imageGridX.length; n++) {
+		imageGridX[n] = imageMinX + (gridSize / 2) + (n * gridSize);
 	}
-	for (i = 0; i < imageGridY.size; i++) {
-		imageGridY[i] = imageMinY + (i * gridSize);
+	for (o = 0; o < imageGridY.length; o++) {
+		imageGridY[o] = imageMinY + (o * gridSize);
 	}
 
-	subRegionX = newArray(imageGridX.size);
+	subRegionX = newArray(imageGridX.length);
 	Array.fill(subRegionX, -1);
-	subRegionY = newArray(imageGridY.size);
+	subRegionY = newArray(imageGridY.length);
 	Array.fill(subRegionY, -1);
 
 	currentPointX = 0;
-	for (i = 0; i < subRegionX.size; i++) {
-		if (imageGridX[i] < imageMinX) {
+	for (p = 0; p < subRegionX.length; p++) {
+		if (imageGridX[p] < minimumX) {
 			continue;
 		}
-		else if (imageGridX[i] > imageMaxX) {
+		else if (imageGridX[p] > maximumX) {
 			break;
 		}
 		else {
-			subRegionX[currentPointX] = imageGridX[i];
+			subRegionX[currentPointX] = imageGridX[p];
 			currentPointX++;
 		}
 	}
 	currentPointY = 0;
-	for (i = 0; i < subRegionY.size; i++) {
-		if (imageGridY[i] < imageMinY) {
+	for (q = 0; q < subRegionY.length; q++) {
+		if (imageGridY[q] < minimumY) {
 			continue;
 		}
-		else if (imageGridY[i] > imageMaxY) {
+		else if (imageGridY[q] > maximumY) {
 			break;
 		}
 		else {
-			subRegionY[currentPointY] = imageGridY[i];
+			subRegionY[currentPointY] = imageGridY[q];
 			currentPointY++;
 		}
 	}
 
-	onlyInCellX = newArray(currentPointX);
-	onlyInCellY = newArray(currentPointY);
+	onlyInCellX = newArray;
+	onlyInCellY = newArray;
 
 	INF = Math.max(imageMaxX, imageMaxY) + 3;
-
-	while (subRegionX[i] != -1 && subRegionY[i] != -1) {
-		
+	r = 0;
+	while (r < subRegionX.length) {
+		if (subRegionX[r] == -1 || subRegionY[r] == -1) {
+			break;
+		}
+		if (isInside(xCoords, yCoords, subRegionX[r], subRegionY[r])) {
+			onlyInCellX[onlyInCellX.length] = subRegionX[r];
+			onlyInCellY[onlyInCellY.length] = subRegionY[r];
+		}
+		r++;
+		if (r >= subRegionX.length) {
+			break;
+		}
 	}
-	
+	Array.print(onlyInCellX);
+	Array.print(onlyInCellY);
+	makeSelection("polygon", xCoords, yCoords);
+	Overlay.addSelection("red");
+	for (s = 0; s < onlyInCellX.length; s++) {
+		drawRect(onlyInCellX[s] - (gridSize / 2), onlyInCellY[s] - (gridSize / 2), gridSize, gridSize);
+		Overlay.addSelection("red");
+	}
+	Overlay.show;
 }
 //Test whether a colinear point lies within a segment
 //Thank you so much to GeeksforGeeks for this solution!
 //https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
-function onSegment(testedPointX, testedPointY, segmentX, segmentY, result) {
-	result[0] = segmentX[0] <= Math.max(testedPointX[0], segmentX[1]) &&
-				segmentX[0] >= Math.min(testedPointX[0], segmentX[1]) &&
-				segmentY[0] <= Math.max(testedPointY[0], segmentY[1]) &&
-				segmentY[0] >= Math.min(testedPointY[0], segmentY[1])
+function onSegment(testedPointX, testedPointY, segmentX1, segmentY1, segmentX2, segmentY2) {
+	if (segmentX1 <= Math.max(testedPointX, segmentX2) &&
+		segmentX1 >= Math.min(testedPointX, segmentX2) &&
+		segmentY1 <= Math.max(testedPointY, segmentY2) &&
+		segmentY1 >= Math.min(testedPointY, segmentY2)) {
+			return true;
+		}
+	return false;
 }
 
+function orientation (pointX1, pointY1, pointX2, pointY2, pointX3, pointY3) {
+	value = (pointY2 - pointY1) * (pointX3 - pointX2) - (pointX2 - pointX1) * (pointY3 - pointY2);
+	if (value == 0) {
+		return 0;
+	}
+	if (value > 0) {
+		return 1;
+	}
+	return 2;
+}
 
+function doIntersect (point1X, point1Y, point2X, point2Y, point3X, point3Y, point4X, point4Y) {
+	o1 = orientation(point1X, point1Y, point2X, point2Y, point3X, point3Y);
+	o2 = orientation(point1X, point1Y, point2X, point2Y, point4X, point4Y);
+	o3 = orientation(point3X, point3Y, point4X, point4Y, point1X, point1Y);
+	o4 = orientation(point3X, point3Y, point4X, point4Y, point2X, point2Y);
+
+	if (o1 != o2 && o3 != o4) {
+		return true;
+	}
+	if (o1 == 0 && onSegment(point1X, point1Y, point3X, point3Y, point2X, point2Y)) {
+		return true;
+	}
+	if (o2 == 0 && onSegment(point1X, point1Y, point4X, point4Y, point2X, point2Y)) {
+		return true;
+	}
+	if (o3 == 0 && onSegment(point3X, point3Y, point1X, point1Y, point4X, point4Y)) {
+		return true;
+	}
+	if (o4 == 0 && onSegment(point3X, point3Y, point2X, point2Y, point4X, point4Y)) {
+		return true;
+	}
+	return false;
+}
+
+function isInside(xCoordinates, yCoordinates, pointX, pointY) {
+	n = xCoordinates.length;
+	numIntersections = 0;
+	s = 0;
+	do {
+		next = (s + 1) % n;
+		if (doIntersect(xCoordinates[s], yCoordinates[s], xCoordinates[next], yCoordinates[next], pointX, pointY, INF, pointY)) {
+			if(orientation(xCoordinates[s], yCoordinates[s], pointX, pointY, xCoordinates[next], yCoordinates[next]) == 0) {
+				return onSegment(xCoordinates[s], yCoordinates[s], pointX, pointY, xCoordinates[next], yCoordinates[next]);
+			}
+			numIntersections++;
+		}
+		s = next;
+	} while (s != 0);
+	return (numIntersections % 2 == 1);
+}
