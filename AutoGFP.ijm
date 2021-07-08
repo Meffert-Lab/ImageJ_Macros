@@ -1,13 +1,15 @@
 Dialog.create("Set Outline File");
 Dialog.addFile("Browse", "/Documents");
+Dialog.addSlider("Threshold", 0, 50, 30);
 Dialog.show();
 thePath = Dialog.getString();
+threshold = Dialog.getNumber();
 
 entireFile = File.openAsString(thePath);
 entireFileArray = split(entireFile,"\n");
 
-imageDirectory = "NONE GIVEN";
-imageName = "NONE GIVEN";
+imageDirectory = "NONE_GIVEN";
+imageName = "NONE_GIVEN";
 for (i = 0; i < entireFileArray.length; i++) {
 	if (entireFileArray[i].indexOf("IMG_DIR") == -1) {
 		continue;
@@ -22,14 +24,21 @@ for (i = 0; i < entireFileArray.length; i++) {
 	imageNameRow = split(entireFileArray[i], "\t");
 	imageName = imageNameRow[1];
 }
-if (imageDirectory != "NONE GIVEN" && imageName != "NONE GIVEN") {
+if (imageDirectory != "NONE_GIVEN" && imageName != "NONE_GIVEN") {
 	open(imageDirectory + "/" + imageName);
 }
-
+else {
+	imageName = getTitle();
+	
+	imageDirectory = thePath.substring(0, thePath.lastIndexOf("/"));
+}
+cellNumber = 0;
+resultNumber = 0;
 for (i = 0; i < entireFileArray.length; i++) {
 	if (entireFileArray[i].indexOf("CELL_START") == -1) {
    		continue;
 	}
+	cellNumber++;
 	lineX = entireFileArray[i + 1];
 	xCoordsString = split(lineX, "\t");
 	xCoords = newArray(xCoordsString.length - 1);
@@ -154,11 +163,25 @@ for (i = 0; i < entireFileArray.length; i++) {
 	makeSelection("polygon", xCoords, yCoords);
 	Overlay.addSelection("red");
 	for (s = 0; s < onlyInCellX.length; s++) {
-		drawRect(onlyInCellX[s] - (gridSize / 2), onlyInCellY[s] - (gridSize / 2), gridSize, gridSize);
-		Overlay.addSelection("red");
+		makeRectangle(onlyInCellX[s] - (gridSize / 2), onlyInCellY[s] - (gridSize / 2), gridSize, gridSize);
+		roiManager("add");
 	}
-	Overlay.show;
+	cellResultsFile = File.open(imageDirectory + "/" + imageName.substring(0, imageName.lastIndexOf(".")) + "_CELL-" + cellNumber + ".csv");
+	roiManager("multi-measure append");
+	for (u = resultNumber; u < nResults; u++) {
+		resultValue = getResult("Mean", u);
+		if (resultValue <= threshold) {
+			continue;
+		}
+		print(cellResultsFile, resultValue + "\n");
+		resultNumber = u;
+	}
+	IJ.deleteRows(0,nResults - 1);
+	updateResults();
+	File.close(cellResultsFile);
 }
+
+
 //Test whether a colinear point lies within a segment
 //Thank you so much to GeeksforGeeks for this solution!
 //https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
@@ -214,8 +237,18 @@ function isInside(xCoordinates, yCoordinates, pointX, pointY) {
 	do {
 		next = (s + 1) % n;
 		if (doIntersect(xCoordinates[s], yCoordinates[s], xCoordinates[next], yCoordinates[next], pointX, pointY, INF, pointY)) {
-			if(orientation(xCoordinates[s], yCoordinates[s], pointX, pointY, xCoordinates[next], yCoordinates[next]) == 0) {
+			if (orientation(xCoordinates[s], yCoordinates[s], pointX, pointY, xCoordinates[next], yCoordinates[next]) == 0) {
 				return onSegment(xCoordinates[s], yCoordinates[s], pointX, pointY, xCoordinates[next], yCoordinates[next]);
+			}
+			if (pointY == yCoordinates[s]) {
+				if (yCoordinates[next] > pointY) {
+					numIntersections--;
+				}
+			}
+			if (pointY == yCoordinates[next]) {
+				if (yCoordinates[s] > pointY) {
+					numIntersections--;
+				}
 			}
 			numIntersections++;
 		}
