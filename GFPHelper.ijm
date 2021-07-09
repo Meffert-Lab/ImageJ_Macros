@@ -50,6 +50,7 @@ for (i = 0; i < entireFileArray.length; i++) {
 		yCoords[k-1] = yCoordsString[k];
 	}
 	makeSelection("polygon", xCoords, yCoords);
+	run("Measure");
 	Overlay.addSelection("red");
 	for (l = 0; l < xCoords.length; l++) {
 		xCoordsSum = (xCoordsSum + xCoords[l]);

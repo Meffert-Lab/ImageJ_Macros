@@ -50,16 +50,39 @@ for (i = 0; i < entireFileArray.length; i++) {
 		yCoords[k-1] = yCoordsString[k];
 	}
 	makeSelection("polygon", xCoords, yCoords);
-	run("Measure");
-	Overlay.addSelection("red");
+	roiManager("add");
+	makeSelection("polygon", xCoords, yCoords);
+	Overlay.add("green");
+	if (entireFileArray[i + 5].indexOf("Nucleus_START") != -1) {
+		lineNucX = entireFileArray[i + 6];
+		nucXCoordsString = split(lineNucX, "\t");
+		nucXCoords = newArray(nucXCoordsString.length - 1);
+		lineNucY = entireFileArray[i + 7];
+		nucYCoordsString = split(lineNucY, "\t");
+		nucYCoords = newArray(nucYCoordsString.length - 1);
+		for (m = 1; m < xCoordsString.length; m++) {
+			nucXCoords[m-1] = nucXCoordsString[m];
+		}
+		for (n = 1; n < yCoordsString.length; n++) {
+			nucYCoords[n-1] = nucYCoordsString[n];
+		}
+		makeSelection("polygon", nucXCoords, nucYCoords);
+		roiManager("add");
+		roiManager("combine");
+		makeSelection("polygon", nucXCoords, nucYCoords);
+		Overlay.add("green");
+	}
 	for (l = 0; l < xCoords.length; l++) {
 		xCoordsSum = (xCoordsSum + xCoords[l]);
 		yCoordsSum = (yCoordsSum + yCoords[l]);
 	}
 	xCoordsAvg = (xCoordsSum/numPoints);
 	yCoordsAvg = (yCoordsSum/numPoints);
-	setColor("red");
+	setColor("green");
 	Overlay.drawString(cellNumber, xCoordsAvg, yCoordsAvg);
+	roiManager("measure");
+	roiManager("deselect");
+	roiManager("delete");
 	cellNumber++;
 }
 Overlay.show;
