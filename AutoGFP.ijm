@@ -1,9 +1,11 @@
 Dialog.create("Set Outline File");
 Dialog.addFile("Browse", "/Documents");
 Dialog.addSlider("Threshold", 0, 50, 30);
+Dialog.addSlider("Grid Size", 0, 32, 8);
 Dialog.show();
 thePath = Dialog.getString();
 threshold = Dialog.getNumber();
+gridSize = Dialog.getNumber();
 
 entireFile = File.openAsString(thePath);
 entireFileArray = split(entireFile,"\n");
@@ -84,8 +86,6 @@ for (i = 0; i < entireFileArray.length; i++) {
 	imageMaxX = getWidth();
 	imageMinY = 0;
 	imageMaxY = getHeight();
-
-	gridSize = 8;
 	
 	imageGridX = newArray((imageMaxX - imageMinX) / gridSize);
 	imageGridY = newArray((imageMaxY - imageMinY) / gridSize);
