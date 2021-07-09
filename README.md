@@ -12,3 +12,8 @@ NOTE - you must use my fork of FISH_QUANT for this to work.
 # AutoDataSplit
 Automatically splits channels from Hyperstack .czi images within a master folder and any subfolders.
 Generates a z-stack .tif image for each channel.
+
+# CytoplasmicIntensityQuant
+Takes a FISH_QUANT outline file containing cell and nuclear outlines as input.
+Quantifies (using the "Measure" tool) gray value statistics of the cytoplasmic space using complex ROIs.
+Displays cell outlines and numerical orders of cells as overlays.
