@@ -1,10 +1,10 @@
 Dialog.create("Set Outline File");
 Dialog.addFile("Browse", "/Documents");
-Dialog.addSlider("Threshold", 0, 50, 30);
+//Dialog.addSlider("Threshold", 0, 50, 30);
 Dialog.addSlider("Grid Size", 0, 32, 8);
 Dialog.show();
 thePath = Dialog.getString();
-threshold = Dialog.getNumber();
+//threshold = Dialog.getNumber();
 gridSize = Dialog.getNumber();
 
 entireFile = File.openAsString(thePath);
@@ -35,7 +35,6 @@ else {
 	imageDirectory = thePath.substring(0, thePath.lastIndexOf("/"));
 }
 cellNumber = 0;
-resultNumber = 0;
 for (i = 0; i < entireFileArray.length; i++) {
 	if (entireFileArray[i].indexOf("CELL_START") == -1) {
    		continue;
@@ -167,15 +166,18 @@ for (i = 0; i < entireFileArray.length; i++) {
 		roiManager("add");
 	}
 	cellResultsFile = File.open(imageDirectory + "/" + imageName.substring(0, imageName.lastIndexOf(".")) + "_CELL-" + cellNumber + ".csv");
-	roiManager("multi-measure append");
-	for (u = resultNumber; u < nResults; u++) {
-		resultValue = getResult("Mean", u);
-		if (resultValue <= threshold) {
+	print(cellResultsFile, "MEAN,MIN,MAX\n");
+	roiManager("multi-measure one");
+	for (u = 0; u < nResults; u++) {
+		resultValue = getResult("Mean1", u);
+		/*if (resultValue <= threshold) {
 			continue;
-		}
-		print(cellResultsFile, resultValue + "\n");
-		resultNumber = u;
+		}*/
+		minValue = getResult("Min1", u);
+		maxValue = getResult("Max1", u);
+		print(cellResultsFile, resultValue + "," + minValue + "," + maxValue + "\n");
 	}
+	
 	IJ.deleteRows(0,nResults - 1);
 	updateResults();
 	File.close(cellResultsFile);
