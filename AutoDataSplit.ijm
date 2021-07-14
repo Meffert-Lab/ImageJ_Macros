@@ -1,3 +1,4 @@
+setBatchMode(true);
 Dialog.create("Choose Working Directory");
 Dialog.addDirectory("Browse", "D:\\Users\\Xinbei\\");
 Dialog.show();
@@ -25,7 +26,14 @@ function splitData (directoryContents, folder) {
 			continue;
 		}
 		filenameWithoutExtension = directoryContents[i].substring(0, directoryContents[i].lastIndexOf("."));
-		run("Bio-Formats", "open=[" + folder + directoryContents[i] + "] autoscale color_mode=Default rois_import=[ROI manager] split_channels view=Hyperstack stack_order=XYCZT series_");
+		run("Bio-Formats", "open=[" + folder + directoryContents[i] + "] autoscale color_mode=Default rois_import=[ROI manager] split_channels split_timepoints view=Hyperstack stack_order=XYCZT");
+		currentTitle = getTitle();
+		partOfCurrentTitle = currentTitle.substring(currentTitle.lastIndexOf("T="), currentTitle.length);
+		while (parseInt(currentTitle.substring(currentTitle.lastIndexOf("T=") + 2, currentTitle.lastIndexOf("T=") + partOfCurrentTitle.indexOf(" "))) != 0) {
+			close();
+			currentTitle = getTitle();
+			partOfCurrentTitle = currentTitle.substring(currentTitle.lastIndexOf("T="), currentTitle.length);
+		}
 		channels = nImages;
 		for (k = 1; k <= channels; k++) {
 			channelNumber = channels - k + 1;
