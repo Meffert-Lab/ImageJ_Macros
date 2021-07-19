@@ -54,11 +54,11 @@ for (i = 0; i < directoryContents.length; i++) {
 		if (minVal < minimumMin) {
 			minimumMin = minVal;
 		}
-		if (maxVal > maximumMean) {
-			maximumMean = maxVal;
+		if (maxVal > maximumMax) {
+			maximumMax = maxVal;
 		}
-		if (maxVal < minimumMean) {
-			minimumMean = maxVal;
+		if (maxVal < minimumMax) {
+			minimumMax = maxVal;
 		}
 	}
 	averageMean = sumMean / numRows;
