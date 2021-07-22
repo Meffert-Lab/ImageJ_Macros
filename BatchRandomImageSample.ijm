@@ -1,7 +1,7 @@
 Dialog.create("Set Folders and Files");
-Dialog.addDirectory("Cell .csv folder");
-Dialog.addDirectory("Images folder");
-Dialog.addFile("Summary statistics file");
+Dialog.addDirectory("Cell .csv folder", "D:\\Users\\Xinbei\\");
+Dialog.addDirectory("Images folder", "D:\\Users\\Xinbei\\");
+Dialog.addFile("Summary statistics file", "D:\\Users\\Xinbei\\");
 
 csvPath = Dialog.getString();
 imgPath = Dialog.getString();
