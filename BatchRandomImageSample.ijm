@@ -8,7 +8,7 @@ csvPath = Dialog.getString();
 imgPath = Dialog.getString();
 outlinePath = Dialog.getString();
 
-randomIntegers = newArray(176, 122, 16, 76, 78, 102, 195, 77, 17, 51, 72, 132, 83, 152, 141, 127, 1, 126, 194, 184, 85, 171, 191, 182, 12, 15, 97, 183, 84, 158, 20, 172, 116, 13, 86, 134, 146, 2, 22, 198);
+randomIntegers = newArray(176, 122, 16, 76, 78, 102, 195, 77, 17, 51, 72, 132, 83, 152, 141, 127, 1, 126, 194, 184, 85, 171, 191, 182, 12, 15, 97, 183, 84, 158, 20, 172, 116, 13, 86, 134, 146, 2, 22, 198, 12, 13);
 
 csvFolderContents = getFileList(csvPath);
 for(i = 0; i < csvFolderContents.length; i++) {
@@ -41,11 +41,11 @@ for(i = 0; i < randomIntegers.length; i++) {
 			zStack = j; //z-stack starts at 1 and ends at max stack
 		}
 	}
-	print(csvFolderContents[i]);
-	open(imgPath + csvFolderContents[i].substring(0, csvFolderContents[i].indexOf("_CELL")) + ".tif");
+	print(csvFolderContents[randomInt]);
+	open(imgPath + csvFolderContents[randomInt].substring(0, csvFolderContents[randomInt].indexOf("_CELL")) + ".tif");
 	setSlice(zStack);
-	setMetadata("Label", csvFolderContents[i].substring(csvFolderContents[i].indexOf("_CELL"), csvFolderContents[i].length) + " STACK:" + zStack);
-	outlineFileContents = File.openAsRawString(outlinePath + File.separator + csvFolderContents[i].substring(0, csvFolderContents[i].indexOf("_CELL")) + "__outline.txt");
+	setMetadata("Label", csvFolderContents[randomInt].substring(csvFolderContents[randomInt].indexOf("_CELL"), csvFolderContents[randomInt].length) + " STACK:" + zStack + " MEAN:" + maxMean);
+	outlineFileContents = File.openAsRawString(outlinePath + File.separator + csvFolderContents[randomInt].substring(0, csvFolderContents[randomInt].indexOf("_CELL")) + "__outline.txt");
 	outlineFileArray = split(outlineFileContents, "\n");
 	cellNumber = 1;
 	for (k = 0; k < outlineFileArray.length; k++) {
