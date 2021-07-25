@@ -7,7 +7,7 @@ directoryContents = getFileList(thePath);
 summaryFile = File.open(thePath + File.separator + "SUMMARY_STATISTICS.tsv");
 print(summaryFile, "FILENAME" + "\t" + "MAX_MEAN" + "\t" + "MIN_MEAN" + "\t" + "AVG_MEAN"
 	+ "\t" + "MAX_MIN" + "\t" + "MIN_MIN" + "\t" + "AVG_MIN"
-	+ "\t" + "MAX_MAX" + "\t" + "MIN_MAX" + "\t" + "AVG_MAX");
+	+ "\t" + "MAX_MAX" + "\t" + "MIN_MAX" + "\t" + "AVG_MAX" + "\t" + "SUM_INT");
 for (i = 0; i < directoryContents.length; i++) {
 	if (directoryContents[i].indexOf("CELL-") == -1) {
 		continue;
@@ -23,6 +23,7 @@ for (i = 0; i < directoryContents.length; i++) {
 	sumMin = 0.0;
 	sumMax = 0.0;
 	numRows = 0;
+	aggregateSum = 0;
 
 	lineArrayAsString = split(fileArray[1], ",");
 	area = parseFloat(lineArrayAsString[0]);
@@ -32,7 +33,7 @@ for (i = 0; i < directoryContents.length; i++) {
 	maximumMin = parseFloat(lineArrayAsString[2]);
 	maximumMax = parseFloat(lineArrayAsString[3]);
 	minimumMax = parseFloat(lineArrayAsString[3]);
-	
+
 	for (j = 2; j < fileArray.length; j++) {
 		lineArrayAsString = split(fileArray[j], ",");
 		numRows++;
@@ -42,6 +43,7 @@ for (i = 0; i < directoryContents.length; i++) {
 		sumMean+=meanVal;
 		sumMin+=minVal;
 		sumMax+=maxVal;
+		aggregateSum+=meanVal * area;
 		if (meanVal > maximumMean) {
 			maximumMean = meanVal;
 		}
@@ -66,6 +68,6 @@ for (i = 0; i < directoryContents.length; i++) {
 	averageMax = sumMax / numRows;
 	print(summaryFile, directoryContents[i] + "\t" + maximumMean + "\t" + minimumMean + "\t" + averageMean
 		+ "\t" + maximumMin + "\t" + minimumMin + "\t" + averageMin
-		+ "\t" + maximumMax + "\t" + minimumMax + "\t" + averageMax);
+		+ "\t" + maximumMax + "\t" + minimumMax + "\t" + averageMax + "\t" + aggregateSum);
 }
 print("DONE");
