@@ -1,11 +1,11 @@
 Dialog.create("Set Outline File");
 Dialog.addFile("Browse", "/Documents");
-//Dialog.addSlider("Threshold", 0, 50, 30);
+Dialog.addSlider("Threshold", 0, 50, 30);
 Dialog.addSlider("Grid Size", 0, 32, 16);
 Dialog.addCheckbox("Nuclear Exclusion", false);
 Dialog.show();
 thePath = Dialog.getString();
-//threshold = Dialog.getNumber();
+threshold = Dialog.getNumber();
 gridSize = Dialog.getNumber();
 nucExclude = Dialog.getCheckbox();
 
@@ -219,6 +219,9 @@ for (i = 0; i < entireFileArray.length; i++) {
 		print(cellResultsFile, "SQUARE_START" + "," + s);
 		for (u = 0; u < nResults; u++) {
 			resultValue = getResult("Mean1", u);
+			if (resultValue <= threshold) {
+				continue;
+			}
 			minValue = getResult("Min1", u);
 			maxValue = getResult("Max1", u);
 			print(cellResultsFile, resultValue + "," + minValue + "," + maxValue + "\n");
