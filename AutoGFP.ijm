@@ -1,8 +1,8 @@
 Dialog.create("Set Outline File");
 Dialog.addFile("Browse", "/Documents");
-Dialog.addSlider("Threshold", 0, 50, 30);
+Dialog.addSlider("Threshold", 0, 50, 0);
 Dialog.addSlider("Grid Size", 0, 32, 16);
-Dialog.addCheckbox("Nuclear Exclusion", false);
+Dialog.addCheckbox("Nuclear Exclusion", true);
 Dialog.show();
 thePath = Dialog.getString();
 threshold = Dialog.getNumber();
@@ -210,7 +210,7 @@ for (i = 0; i < entireFileArray.length; i++) {
 		File.delete(imageDirectory + "/" + imageName.substring(0, imageName.lastIndexOf(".")) + "_NUC_EXCLUDE_" + nucExclude + "_CELL-" + cellNumber + ".csv");
 	}
 	cellResultsFile = File.open(imageDirectory + "/" + imageName.substring(0, imageName.lastIndexOf(".")) + "_NUC_EXCLUDE_" + nucExclude + "_CELL-" + cellNumber + ".csv");
-	print(cellResultsFile, "MEAN,MIN,MAX\n");
+	print(cellResultsFile, "AREA,MEAN,MIN,MAX,SUM\n");
 	for (s = 0; s < onlyInCellX.length; s++) {
 		makeRectangle(onlyInCellX[s] - (gridSize / 2), onlyInCellY[s] - (gridSize / 2), gridSize, gridSize);
 		roiManager("add");
@@ -218,13 +218,15 @@ for (i = 0; i < entireFileArray.length; i++) {
 		roiManager("multi-measure one");
 		print(cellResultsFile, "SQUARE_START" + "," + s);
 		for (u = 0; u < nResults; u++) {
+			areaValue = getResult("Area1", u);
 			resultValue = getResult("Mean1", u);
 			if (resultValue <= threshold) {
 				continue;
 			}
 			minValue = getResult("Min1", u);
 			maxValue = getResult("Max1", u);
-			print(cellResultsFile, resultValue + "," + minValue + "," + maxValue + "\n");
+			sumValue = areaValue * resultValue;
+			print(cellResultsFile, areaValue + "," + resultValue + "," + minValue + "," + maxValue + "," + sumValue + "\n");
 		}
 		print(cellResultsFile, "SQUARE_END");
 		roiManager("deselect");
