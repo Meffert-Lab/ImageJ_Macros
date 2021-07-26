@@ -208,24 +208,17 @@ for (i = 0; i < entireFileArray.length; i++) {
 		roiManager("add");
 		//Overlay.drawRect(onlyInCellX[s] - (gridSize / 2), onlyInCellY[s] - (gridSize / 2), gridSize, gridSize);
 		roiManager("multi-measure one");
-		print(cellResultsFile, "");
+		print(cellResultsFile, "SQUARE_START" + "," + s);
 		for (u = 0; u < nResults; u++) {
 			resultValue = getResult("Mean1", u);
 			minValue = getResult("Min1", u);
 			maxValue = getResult("Max1", u);
 			print(cellResultsFile, resultValue + "," + minValue + "," + maxValue + "\n");
-			//resultNumber = u + 1;
 		}
+		print(cellResultsFile, "SQUARE_END");
 		roiManager("deselect");
 		roiManager("delete");
 	}
-	//for (u = resultNumber; u < nResults; u++) {
-		
-		/*if (resultValue <= threshold) {
-			continue;
-		}*/
-		
-	//}
 	File.close(cellResultsFile);
 }
 
