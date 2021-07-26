@@ -145,6 +145,11 @@ for (i = 0; i < entireFileArray.length; i++) {
 		for (n = 1; n < nucYCoordsString.length; n++) {
 			nucYCoords[n-1] = parseInt(nucYCoordsString[n]);
 		}
+		doNucleus = true;
+	}
+	else if (nucExclude) {
+		print("NO NUCLEAR OUTLINE FOR CELL: " + cellNumber);
+		doNucleus = false;
 	}
 	onlyInCellX = newArray;
 	onlyInCellY = newArray;
@@ -175,7 +180,7 @@ for (i = 0; i < entireFileArray.length; i++) {
 			break;
 		}
 	}
-	if (nucExclude) {
+	if (doNucleus) {
 		v = 0;
 		while (v < onlyInCellX.length) {
 			if(isInside(nucXCoords, nucYCoords, onlyInCellX[v], onlyInCellY[v])) {
@@ -201,6 +206,9 @@ for (i = 0; i < entireFileArray.length; i++) {
 	roiManager("add");
 	roiManager("deselect");
 	roiManager("delete");
+	if (File.exists(imageDirectory + "/" + imageName.substring(0, imageName.lastIndexOf(".")) + "_NUC_EXCLUDE_" + nucExclude + "_CELL-" + cellNumber + ".csv")) {
+		File.delete(imageDirectory + "/" + imageName.substring(0, imageName.lastIndexOf(".")) + "_NUC_EXCLUDE_" + nucExclude + "_CELL-" + cellNumber + ".csv");
+	}
 	cellResultsFile = File.open(imageDirectory + "/" + imageName.substring(0, imageName.lastIndexOf(".")) + "_NUC_EXCLUDE_" + nucExclude + "_CELL-" + cellNumber + ".csv");
 	print(cellResultsFile, "MEAN,MIN,MAX\n");
 	for (s = 0; s < onlyInCellX.length; s++) {
