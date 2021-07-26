@@ -1,11 +1,15 @@
 Dialog.create("Set Outline File");
 Dialog.addFile("Browse", "/Documents");
 //Dialog.addSlider("Threshold", 0, 50, 30);
-Dialog.addSlider("Grid Size", 0, 32, 8);
+Dialog.addSlider("Grid Size", 0, 32, 16);
+Dialog.addCheckbox("Nuclear Exclusion", false);
 Dialog.show();
 thePath = Dialog.getString();
 //threshold = Dialog.getNumber();
 gridSize = Dialog.getNumber();
+nucExclude = Dialog.getCheckbox();
+
+setBatchMode(true);
 
 entireFile = File.openAsString(thePath);
 entireFileArray = split(entireFile,"\n");
@@ -35,6 +39,7 @@ else {
 	imageDirectory = thePath.substring(0, thePath.lastIndexOf("/"));
 }
 cellNumber = 0;
+resultNumber = 0;
 for (i = 0; i < entireFileArray.length; i++) {
 	if (entireFileArray[i].indexOf("CELL_START") == -1) {
    		continue;
@@ -127,7 +132,20 @@ for (i = 0; i < entireFileArray.length; i++) {
 			currentPointY++;
 		}
 	}
-
+	if (entireFileArray[i + 5].indexOf("Nucleus_START") != -1 && nucExclude) {
+		lineNucX = entireFileArray[i + 6];
+		nucXCoordsString = split(lineNucX, "\t");
+		nucXCoords = newArray(nucXCoordsString.length - 1);
+		lineNucY = entireFileArray[i + 7];
+		nucYCoordsString = split(lineNucY, "\t");
+		nucYCoords = newArray(nucYCoordsString.length - 1);
+		for (m = 1; m < nucXCoordsString.length; m++) {
+			nucXCoords[m-1] = parseInt(nucXCoordsString[m]);
+		}
+		for (n = 1; n < nucYCoordsString.length; n++) {
+			nucYCoords[n-1] = parseInt(nucYCoordsString[n]);
+		}
+	}
 	onlyInCellX = newArray;
 	onlyInCellY = newArray;
 
@@ -157,29 +175,57 @@ for (i = 0; i < entireFileArray.length; i++) {
 			break;
 		}
 	}
-	Array.print(onlyInCellX);
-	Array.print(onlyInCellY);
+	if (nucExclude) {
+		v = 0;
+		while (v < onlyInCellX.length) {
+			if(isInside(nucXCoords, nucYCoords, onlyInCellX[v], onlyInCellY[v])) {
+				onlyInCellX = Array.deleteIndex(onlyInCellX, v);
+				onlyInCellY = Array.deleteIndex(onlyInCellY, v);
+				continue;
+			}
+			v++;
+			if (v >= onlyInCellX.length) {
+				break;
+			}
+		}
+	}
+	//Array.print(onlyInCellX);
+	//Array.print(onlyInCellY);
+	//makeSelection("polygon", xCoords, yCoords);
+	//Overlay.addSelection("red");
+	//if (nucExclude) {
+		//makeSelection("polygon", nucXCoords, nucYCoords);
+		//Overlay.addSelection("green");
+	//}
 	makeSelection("polygon", xCoords, yCoords);
-	Overlay.addSelection("red");
+	roiManager("add");
+	roiManager("deselect");
+	roiManager("delete");
+	cellResultsFile = File.open(imageDirectory + "/" + imageName.substring(0, imageName.lastIndexOf(".")) + "_NUC_EXCLUDE_" + nucExclude + "_CELL-" + cellNumber + ".csv");
+	print(cellResultsFile, "MEAN,MIN,MAX\n");
 	for (s = 0; s < onlyInCellX.length; s++) {
 		makeRectangle(onlyInCellX[s] - (gridSize / 2), onlyInCellY[s] - (gridSize / 2), gridSize, gridSize);
 		roiManager("add");
+		//Overlay.drawRect(onlyInCellX[s] - (gridSize / 2), onlyInCellY[s] - (gridSize / 2), gridSize, gridSize);
+		roiManager("multi-measure one");
+		print(cellResultsFile, "");
+		for (u = 0; u < nResults; u++) {
+			resultValue = getResult("Mean1", u);
+			minValue = getResult("Min1", u);
+			maxValue = getResult("Max1", u);
+			print(cellResultsFile, resultValue + "," + minValue + "," + maxValue + "\n");
+			//resultNumber = u + 1;
+		}
+		roiManager("deselect");
+		roiManager("delete");
 	}
-	cellResultsFile = File.open(imageDirectory + "/" + imageName.substring(0, imageName.lastIndexOf(".")) + "_CELL-" + cellNumber + ".csv");
-	print(cellResultsFile, "MEAN,MIN,MAX\n");
-	roiManager("multi-measure one");
-	for (u = 0; u < nResults; u++) {
-		resultValue = getResult("Mean1", u);
+	//for (u = resultNumber; u < nResults; u++) {
+		
 		/*if (resultValue <= threshold) {
 			continue;
 		}*/
-		minValue = getResult("Min1", u);
-		maxValue = getResult("Max1", u);
-		print(cellResultsFile, resultValue + "," + minValue + "," + maxValue + "\n");
-	}
-	
-	IJ.deleteRows(0,nResults - 1);
-	updateResults();
+		
+	//}
 	File.close(cellResultsFile);
 }
 
