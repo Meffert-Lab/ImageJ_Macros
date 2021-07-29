@@ -16,7 +16,7 @@ for (i = 0; i < directoryContents.length; i++) {
 		continue;
 	}
 
-	fileString = File.openAsRawString(thePath + File.separator + directoryContents[i], 9999);
+	fileString = File.openAsRawString(thePath + File.separator + directoryContents[i], File.length(thePath + File.separator + directoryContents[i]) + 500);
 	fileArray = split(fileString, "\n");
 	
 	sumMean = 0.0;
@@ -24,8 +24,13 @@ for (i = 0; i < directoryContents.length; i++) {
 	sumMax = 0.0;
 	numRows = 0;
 	aggregateSum = 0;
-
-	lineArrayAsString = split(fileArray[1], ",");
+	for (a = 1; a < fileArray.length; a++) {
+		if (fileArray[a].indexOf("SQUARE") != -1) {
+			continue;
+		}
+		break;
+	}
+	lineArrayAsString = split(fileArray[a], ",");
 	area = parseFloat(lineArrayAsString[0]);
 	maximumMean = parseFloat(lineArrayAsString[1]);
 	minimumMean = parseFloat(lineArrayAsString[1]);
@@ -33,8 +38,10 @@ for (i = 0; i < directoryContents.length; i++) {
 	maximumMin = parseFloat(lineArrayAsString[2]);
 	maximumMax = parseFloat(lineArrayAsString[3]);
 	minimumMax = parseFloat(lineArrayAsString[3]);
-
-	for (j = 2; j < fileArray.length; j++) {
+	for (j = a; j < fileArray.length; j++) {
+		if (fileArray[j].indexOf("SQUARE") != -1) {
+			continue;
+		}
 		lineArrayAsString = split(fileArray[j], ",");
 		numRows++;
 		meanVal = parseFloat(lineArrayAsString[1]);
