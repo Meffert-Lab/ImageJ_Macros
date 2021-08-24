@@ -7,7 +7,7 @@ directoryContents = getFileList(thePath);
 summaryFile = File.open(thePath + File.separator + "SUMMARY_STATISTICS.tsv");
 print(summaryFile, "FILENAME" + "\t" + "MAX_MEAN" + "\t" + "MIN_MEAN" + "\t" + "AVG_MEAN"
 	+ "\t" + "MAX_MIN" + "\t" + "MIN_MIN" + "\t" + "AVG_MIN"
-	+ "\t" + "MAX_MAX" + "\t" + "MIN_MAX" + "\t" + "AVG_MAX" + "\t" + "SUM_INT");
+	+ "\t" + "MAX_MAX" + "\t" + "MIN_MAX" + "\t" + "AVG_MAX" + "\t" + "SUM_INT" + "\t" + "MAX_STACK_SUM");
 for (i = 0; i < directoryContents.length; i++) {
 	if (directoryContents[i].indexOf("CELL-") == -1) {
 		continue;
@@ -73,8 +73,9 @@ for (i = 0; i < directoryContents.length; i++) {
 	averageMean = sumMean / numRows;
 	averageMin = sumMin / numRows;
 	averageMax = sumMax / numRows;
+	maxStackSum = maximumMean * area;
 	print(summaryFile, directoryContents[i] + "\t" + maximumMean + "\t" + minimumMean + "\t" + averageMean
 		+ "\t" + maximumMin + "\t" + minimumMin + "\t" + averageMin
-		+ "\t" + maximumMax + "\t" + minimumMax + "\t" + averageMax + "\t" + aggregateSum);
+		+ "\t" + maximumMax + "\t" + minimumMax + "\t" + averageMax + "\t" + aggregateSum + "\t" + maxStackSum);
 }
 print("DONE");
