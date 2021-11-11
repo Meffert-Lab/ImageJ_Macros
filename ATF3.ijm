@@ -33,7 +33,7 @@ for (i = 0; i < outlineDirectoryContents.length; i++) {
 		if (entireFileArray[k].indexOf("CELL_START") == -1) {
    		continue;
 		}
-		cellLineNums[numCells] = k;
+		cellLineNums = Array.concat(cellLineNums, k);
 		cellNumberLine = entireFileArray[k];
 		cellNumberLineArray = split(cellNumberLine, "\t");
 		CellName = cellNumberLineArray[1];
@@ -102,7 +102,7 @@ for (i = 0; i < outlineDirectoryContents.length; i++) {
 			hasPositiveCells = true;
 		}
 	}
-	Array.print(cellStates);
+	//Array.print(cellStates);
 	if (hasPositiveCells == false) {
 		fileToSave = File.open(outlinePath + "/" + "UNINJURED" + "/" + outlineDirectoryContents[i]);
 		print(fileToSave, entireFile);
