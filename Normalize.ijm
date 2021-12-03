@@ -3,7 +3,7 @@ Dialog.addDirectory("Browse", "D:\\Users\\Xinbei\\");
 Dialog.show();
 thePath = Dialog.getString();
 
-ipsiUninjSummary = File.openAsRawString(thePath + "/" + "ipsi_uninjured" + "/" + "__FQ_batch_summary_ALL_210926.txt");
+ipsiUninjSummary = File.openAsRawString(thePath + "/" + "ipsi_uninjured" + "/" + "__FQ_batch_summary_ALL_211025.txt");
 ipsiUninjArray = split(ipsiUninjSummary, "\n");
 ipsiUninjOrganized = newArray(ipsiUninjArray.length);
 organizeVals(ipsiUninjArray, ipsiUninjOrganized);
@@ -17,7 +17,7 @@ for (a = 0; a < ipsiUninjOrganized.length; a++) {
 
 }
 //Array.print(avgVals);
-ipsiInjSummary = File.openAsRawString(thePath + "/" + "ipsi_injured" + "/" + "__FQ_batch_summary_ALL_210926.txt");
+ipsiInjSummary = File.openAsRawString(thePath + "/" + "ipsi_injured" + "/" + "__FQ_batch_summary_ALL_211025.txt");
 ipsiInjArray = split(ipsiInjSummary, "\n");
 ipsiInjOrganized = newArray(ipsiInjArray.length);
 organizeVals(ipsiInjArray, ipsiInjOrganized);
@@ -56,6 +56,21 @@ for (a = 0; a < uninjuredFilenames.length; a++) {
 		}
 	}
 }
+lengthDiffers = true;
+while (lengthDiffers) {
+	if (injuredFilenames.length > uninjuredFilenames.length) {
+		injuredFilenames = Array.deleteIndex(injuredFilenames, injuredFilenames.length - 1);
+		continue;
+	}
+	if (uninjuredFilenames.length > injuredFilenames.length) {
+		uninjuredFilenames = Array.deleteIndex(uninjuredFilenames, uninjuredFilenames.length - 1);
+		continue;
+	}
+	lengthDiffers = false;
+}
+
+//Array.print(uninjuredFilenames);
+//Array.print(injuredFilenames);
 for (a = 0; a < uninjuredFilenames.length; a++) {
 	if (ipsiInjOrganized[a].indexOf(uninjuredFilenames[a]) == -1) {
 		ipsiInjOrganized = Array.deleteIndex(ipsiInjOrganized, a);
@@ -69,17 +84,30 @@ for (a = 0; a < uninjuredFilenames.length; a++) {
 		continue;
 	}
 }
+lengthDiffers = true;
+while (lengthDiffers) {
+	if (ipsiInjOrganized.length > uninjuredFilenames.length) {
+		ipsiInjOrganized = Array.deleteIndex(ipsiInjOrganized, ipsiInjOrganized.length - 1);
+		continue;
+	}
+	if (ipsiUninjOrganized.length > uninjuredFilenames.length) {
+		ipsiUninjOrganized = Array.deleteIndex(ipsiUninjOrganized, ipsiUninjOrganized.length - 1);
+		continue;
+	}
+	lengthDiffers = false;
+}
 normalizedUninjured = newArray(ipsiUninjOrganized.length);
 normalizeArrayToValue(ipsiUninjOrganized, avgVals, normalizedUninjured);
 normalizedInjured = newArray(ipsiInjOrganized.length);
 normalizeArrayToValue(ipsiInjOrganized, avgVals, normalizedInjured);
-//Array.print(normalizedUninjured);
+//Array.print(avgVals);
+//Array.print(normalizedInjured);
 ipsiInjuredFile = File.open(thePath + "/" + "ipsi_injured" + "/" + "NORMALIZED_IPSI_INJ.txt");
 for (a = 0; a < normalizedInjured.length; a++) {
 	print(ipsiInjuredFile, normalizedInjured[a]);
 }
 File.close(ipsiInjuredFile);
-//Array.print(normalizedInjured);
+//Array.print(normalizedUninjured);
 ipsiUninjuredFile = File.open(thePath + "/" + "ipsi_uninjured" + "/" + "NORMALIZED_IPSI_UNINJ.txt");
 for (a = 0; a < normalizedUninjured.length; a++) {
 	print(ipsiUninjuredFile, normalizedUninjured[a]);
@@ -116,10 +144,11 @@ function organizeVals (array, allCellsInFile) {
 			identifierSum = 0;
 			allCellsInFile[conditionCount - 1] = identifier;
 		}
-		allCellsInFile[conditionCount - 1] = allCellsInFile[conditionCount - 1] + "\t" + lineArray[lineArray.length - 1];
+		allCellsInFile[conditionCount - 1] = allCellsInFile[conditionCount - 1] + "\t" + lineArray[3];
 		identifierCellCount++;
-		identifierSum += parseFloat(lineArray[lineArray.length - 1]);
+		identifierSum += parseFloat(lineArray[3]);
 	}
+	allCellsInFile[conditionCount - 1] = allCellsInFile[conditionCount - 1] + "\t" + identifierSum / identifierCellCount;
 	//Array.print(allCellsInFile);
 }
 
